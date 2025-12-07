@@ -1,7 +1,7 @@
-    .form{
-        animation: transform 0.2s ease;
-    }
+.form {
+  animation: transform 0.2s ease;
+}
 
-    .form:hover{
-        transform: scale(1.02);
-    }
+.form:hover {
+  transform: scale(1.02);
+}
