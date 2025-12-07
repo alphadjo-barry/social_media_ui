@@ -19,6 +19,7 @@ export default function Register() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [phone, setPhone] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
     const { jours, setJours } = useJourHook();
     const { mois, setMois } = useMoisHook();
@@ -192,20 +193,20 @@ export default function Register() {
                                 </label>
                                 <div className="input-group">
                                     <Input
-                                        type={ showPassword ? "text" : "password"}
+                                        type={ showPasswordConfirm ? "text" : "password"}
                                         classeName="form-control rounded shadow-lg border border-secondary p-2"
                                         id="password"
                                         placeholder="Enter your password confirmation"
-                                        onChange={ () => setShowPassword(!showPassword) }
+                                        onChange={ () => setConfirmPassword(e.target.value) }
                                     />
 
                                     {
                                         <span
                                             className="d-flex align-content-end input-group-text bg-light border-0"
                                             style={{ cursor: "pointer", position: "absolute", right: 5, top: 5}}
-                                            onClick={ () => setShowPassword(!showPassword) }
+                                            onClick={ () => setShowPasswordConfirm(!showPasswordConfirm) }
                                         >
-                                        {showPassword ? <IoMdEyeOff size={20} /> : <IoEye size={20} />}
+                                        {showPasswordConfirm ? <IoMdEyeOff size={20} /> : <IoEye size={20} />}
                                         </span>
                                     }
 
