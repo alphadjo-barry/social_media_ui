@@ -7,8 +7,8 @@ import {useNavigate} from "react-router-dom";
 
 export default function Menu() {
     const navigate = useNavigate();
+
   useEffect(() => {
-      // Initialization for ES Users
       initMDB({ Dropdown });
   }, []);
 

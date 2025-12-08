@@ -13,3 +13,42 @@ html, body, #root {
 .main-content {
     flex: 1; /* prend l’espace restant, pousse le footer en bas */
 }
+
+/* Thème clair */
+.light {
+    --bs-body-bg: #ffffff !important;
+    --bs-body-color: #000000 !important;
+
+    background-color: var(--bs-body-bg) !important;
+    color: var(--bs-body-color) !important;
+}
+
+/* Thème sombre */
+.dark {
+    --bs-body-bg: #121212 !important;
+    --bs-body-color: #ffffff !important;
+
+    background-color: var(--bs-body-bg) !important;
+    color: var(--bs-body-color) !important;
+}
+
+/* Footer compatible thème */
+.dark footer {
+    background-color: #1e1e1e !important;
+    color: white !important;
+}
+
+.light footer {
+    background-color: #f8f9fa !important;
+    color: black !important;
+}
+
+/* Container principal */
+.dark .app-container {
+    background-color: #1e1e1e !important;
+}
+
+.light .app-container {
+    background-color: #ffffff !important;
+}
+

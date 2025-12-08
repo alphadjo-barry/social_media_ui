@@ -16,7 +16,7 @@ const Login = () => {
   const handleAuthentication = async (e) => {
     e.preventDefault();
 
-    const paylod = {
+    const payload = {
       email: email,
       password: password,
     };
@@ -26,7 +26,7 @@ const Login = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(paylod),
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
@@ -40,6 +40,7 @@ const Login = () => {
       path: "/",
       expires: 1,
       sameSite: "Strict",
+      readOnly: true
     });
 
     navigate("/dashboard", { replace: true });

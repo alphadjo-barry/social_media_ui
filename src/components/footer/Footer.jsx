@@ -1,3 +1,4 @@
+import ThemeToggle from "../contexte/ThemeToggle.jsx";
 
 export default function Footer(){
     return (
@@ -10,6 +11,7 @@ export default function Footer(){
                 </div>
 
                 <div>
+                    <ThemeToggle/>
                     <a href="" className="me-4 text-reset">
                         <i className="fab fa-facebook-f"></i>
                     </a>

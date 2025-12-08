@@ -72,7 +72,7 @@ export default function Register() {
             className="shadow-lg p-3 rounded-4"
             style={{ width: "700px", backgroundColor: "#ffffff" }}
           >
-            <h4 className="text-start mb-5"> Create an account</h4>
+            <h4 className="text-start mb-5"> Create an connectify account</h4>
             <form>
               <div className="row">
                 <div className="col mb-3">

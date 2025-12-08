@@ -1,7 +1,7 @@
 import {
-  createBrowserRouter,
-  Outlet,
-  RouterProvider,
+    createBrowserRouter, Navigate,
+    Outlet,
+    RouterProvider,
 } from "react-router-dom";
 import Login from "./components/login/Login.jsx";
 import Menu from "./components/menu/Menu.jsx";
@@ -11,12 +11,13 @@ import Dashboard from "./components/dashboard/Dashboard.jsx";
 import "mdb-ui-kit/css/mdb.min.css";
 import { Dropdown, Collapse, initMDB } from "mdb-ui-kit";
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import {useNavigate} from "react-router-dom";
 import Footer from "./components/footer/Footer.jsx";
 import "./App.css"
+import { useContext } from "react";
 
-// Initialise MDB (pour Dropdowns, Collapse etc.)
+
 initMDB({ Dropdown, Collapse });
+import { ThemeContext} from "./hooks/useTheme.jsx";
 
 const router = createBrowserRouter([
   {
@@ -49,25 +50,25 @@ function App() {
 
 function ProtectedRoute() {
   const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
 
-  if (!isAuthenticated) {
-    navigate("/", { replace: true });
-  }
-
-  return <Outlet />;
+  if(isAuthenticated === null) return null;
+   return isAuthenticated ? <Outlet/> : <Navigate to="/" replace />;
 }
 
 function Root() {
+
+  const { theme } = useContext(ThemeContext);
   return (
     <>
-      <Menu />
-      <div className="d-flex align-items-center justify-content-between mt-3 app-container">
-         <div className="main-content">
-             <Outlet />
-         </div>
-      </div>
-        <Footer />
+        <Menu />
+       <div className={theme}>
+           <div className="d-flex align-items-center justify-content-between app-container">
+               <div className="main-content">
+                   <Outlet />
+               </div>
+           </div>
+           <Footer />
+       </div>
     </>
   );
 }
