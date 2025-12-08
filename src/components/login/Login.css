@@ -1,7 +1,7 @@
-.form {
-  animation: transform 0.2s ease;
+
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
 }
 
-.form:hover {
-  transform: scale(1.02);
-}

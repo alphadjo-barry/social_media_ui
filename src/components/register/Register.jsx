@@ -34,7 +34,6 @@ export default function Register() {
   const { genres } = useGenreHook();
 
   useEffect(() => {
-    // Attention : les mois commencent à 0 en JS (0 = janvier, 1 = février)
     if (selectedJour && selectedMois && selectedAnnee) {
       const newDate = new Date(
         selectedAnnee,
@@ -88,6 +87,7 @@ export default function Register() {
                   <div className="input-group">
                     <Input
                       type="text"
+                      value={firstName}
                       className="form-control rounded shadow-lg border border-secondary p-2"
                       id="username"
                       placeholder="Enter your firstname"
@@ -109,6 +109,7 @@ export default function Register() {
                   <div className="input-group">
                     <Input
                       type="text"
+                      value={lastName}
                       className="form-control rounded shadow-lg border border-secondary p-2"
                       id="username"
                       placeholder="Enter your lastname"
@@ -132,6 +133,7 @@ export default function Register() {
                   <div className="input-group">
                     <Input
                       type="text"
+                      value={email}
                       className="form-control rounded shadow-lg border border-secondary p-2"
                       id="address_mail"
                       placeholder="Enter your mail address"
@@ -153,6 +155,7 @@ export default function Register() {
                   <div className="input-group">
                     <Input
                       type="text"
+                      value={phone}
                       className="form-control rounded shadow-lg border border-secondary p-2"
                       id="phone"
                       placeholder="Enter your phone number"
@@ -230,6 +233,7 @@ export default function Register() {
                 <div className="position-relative">
                   <Input
                     type={showPassword ? "text" : "password"}
+                    value={password}
                     className="form-control rounded shadow-lg border border-secondary p-2"
                     id="password"
                     placeholder="Enter your password"
@@ -270,6 +274,7 @@ export default function Register() {
                 <div className="position-relative">
                   <Input
                     type={showPasswordConfirm ? "text" : "password"}
+                    value={confirmPassword}
                     className="form-control rounded shadow-lg border border-secondary p-2"
                     id="password_confirmation"
                     placeholder="Enter your password confirmation"

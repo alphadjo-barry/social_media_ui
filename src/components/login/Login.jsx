@@ -1,5 +1,5 @@
 import { FaUser, FaLock } from "react-icons/fa";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import Input from "../inputs/text/Input.jsx";
 import { IoEye } from "react-icons/io5";
 import { IoMdEyeOff } from "react-icons/io";
@@ -12,38 +12,56 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const [error, setError] = useState("");
+
+    useEffect(() => {
+
+        if(error){
+            setTimeout(() => {
+                setError("");
+            }, 15000)
+        }
+    }, [error]);
 
   const handleAuthentication = async (e) => {
-    e.preventDefault();
+      e.preventDefault();
 
-    const payload = {
-      email: email,
-      password: password,
-    };
+      const payload = {
+          email: email,
+          password: password,
+      };
 
-    const response = await fetch("http://localhost:8080/api/v1/authenticate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+      try {
+          const response = await fetch("http://localhost:8080/api/v1/authenticate", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify(payload),
+          });
 
-    if (!response.ok) {
-      throw new Error("Authentication failed");
-    }
+          if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.message || "Authentication failed");
+          }
 
-    const jwt = await response.json();
-    console.log("Serveur response : ", jwt.token);
+          const jwt = await response.json();
+          console.log("Serveur response : ", jwt.token);
 
-    Cookies.set("token", jwt.token, {
-      path: "/",
-      expires: 1,
-      sameSite: "Strict",
-      readOnly: true
-    });
+          // Sauvegarde le token dans le cookie
+          Cookies.set("token", jwt.token, {
+              path: "/",
+              expires: 1,
+              sameSite: "Strict",
+              readOnly: true,
+          });
 
-    navigate("/dashboard", { replace: true });
+          // Redirection vers le dashboard
+          navigate("/dashboard", { replace: true });
+      } catch (err) {
+          console.log("Error from server: ", err.message);
+          setError(err.message);
+      }
   };
 
   return (
@@ -75,7 +93,7 @@ const Login = () => {
 
         <div className="col-md-4 d-flex justify-content-center align-items-center border-left border-bottom">
           <div
-            className="shadow-lg p-4 rounded-4 form"
+            className="shadow-lg p-4 rounded-4"
             style={{ width: "550px", backgroundColor: "#ffffff" }}
           >
             <h4 className="text-start mb-5"> connect to connectivity</h4>
@@ -169,6 +187,11 @@ const Login = () => {
                 </p>
               </div>
             </form>
+
+              {error && (<div className="alert alert-danger p-3 d-flex align-items-center justify-content-between" style={{ height: "50px", fontSize: "14px", fontWeight: "bold"}}>
+                         <p className="error-message">{error}</p>
+                  </div>)
+              }
           </div>
         </div>
       </div>
