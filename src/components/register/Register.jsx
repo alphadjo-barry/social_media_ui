@@ -1,11 +1,5 @@
-import { Fragment, useState } from "react";
-import {
-  FaLock,
-  FaPhone,
-  FaPhoneAlt,
-  FaQuestion,
-  FaUser,
-} from "react-icons/fa";
+import { Fragment, useEffect, useState } from "react";
+import { FaLock, FaPhoneAlt, FaUser } from "react-icons/fa";
 import Input from "../inputs/text/Input.jsx";
 
 import { MdEmail } from "react-icons/md";
@@ -16,6 +10,7 @@ import { useAnneeHook } from "../../hooks/useAnneeHook.jsx";
 import useGenreHook from "../../hooks/useGenreHook.jsx";
 import { IoMdEyeOff } from "react-icons/io";
 import { IoEye } from "react-icons/io5";
+import { RiQuestionMark } from "react-icons/ri";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -27,10 +22,32 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
-  const { jours, setJours } = useJourHook();
-  const { mois, setMois } = useMoisHook();
-  const { annees, setAnnees } = useAnneeHook();
-  const { genres, setGenres } = useGenreHook();
+  const [selectedJour, setSelectedJour] = useState(-1);
+  const [selectedMois, setSelectedMois] = useState(-1);
+  const [selectedAnnee, setSelectedAnnee] = useState(-1);
+  const [selectedGenre, setSelectedGenre] = useState("");
+  const [birthDay, setBirthDay] = useState("");
+
+  const { jours } = useJourHook();
+  const { mois } = useMoisHook();
+  const { annees } = useAnneeHook();
+  const { genres } = useGenreHook();
+
+  useEffect(() => {
+    // Attention : les mois commencent à 0 en JS (0 = janvier, 1 = février)
+    if (selectedJour && selectedMois && selectedAnnee) {
+      const newDate = new Date(
+        selectedAnnee,
+        selectedMois - 1,
+        selectedJour
+      ).toLocaleDateString("fr-FR");
+      setBirthDay(newDate);
+    }
+  }, [selectedJour, selectedMois, selectedAnnee]);
+
+  useEffect(() => {
+    console.log("birthday : ", birthDay);
+  }, [birthDay]);
 
   return (
     <div
@@ -71,7 +88,7 @@ export default function Register() {
                   <div className="input-group">
                     <Input
                       type="text"
-                      classeName="form-control rounded shadow-lg border border-secondary p-2"
+                      className="form-control rounded shadow-lg border border-secondary p-2"
                       id="username"
                       placeholder="Enter your firstname"
                       onChange={(e) => setFirstName(e.target.value)}
@@ -81,7 +98,7 @@ export default function Register() {
 
                 <div className="col mb-3">
                   <label
-                    htmlFor="firstname"
+                    htmlFor="lastname"
                     className="form-label d-flex align-items-center   "
                   >
                     <span className="input-group-text bg-light border-0">
@@ -92,7 +109,7 @@ export default function Register() {
                   <div className="input-group">
                     <Input
                       type="text"
-                      classeName="form-control rounded shadow-lg border border-secondary p-2"
+                      className="form-control rounded shadow-lg border border-secondary p-2"
                       id="username"
                       placeholder="Enter your lastname"
                       onChange={(e) => setLastName(e.target.value)}
@@ -115,8 +132,8 @@ export default function Register() {
                   <div className="input-group">
                     <Input
                       type="text"
-                      classeName="form-control rounded shadow-lg border border-secondary p-2"
-                      id="username"
+                      className="form-control rounded shadow-lg border border-secondary p-2"
+                      id="address_mail"
                       placeholder="Enter your mail address"
                       onChange={(e) => setEmail(e.target.value)}
                     />
@@ -136,8 +153,8 @@ export default function Register() {
                   <div className="input-group">
                     <Input
                       type="text"
-                      classeName="form-control rounded shadow-lg border border-secondary p-2"
-                      id="username"
+                      className="form-control rounded shadow-lg border border-secondary p-2"
+                      id="phone"
                       placeholder="Enter your phone number"
                       onChange={(e) => setPhone(e.target.value)}
                     />
@@ -152,7 +169,7 @@ export default function Register() {
                 >
                   Date de naissance
                   <span className="input-group-text bg-light border-0 p-2">
-                    <FaQuestion />
+                    <RiQuestionMark />
                   </span>
                 </label>
                 <div className="col mb-3">
@@ -160,7 +177,7 @@ export default function Register() {
                     <Select
                       options={jours}
                       className="form-select rounded shadow-lg border border-secondary p-2"
-                      onChange={(e) => setJours(e.target.value)}
+                      onChange={(e) => setSelectedJour(e.target.value)}
                       placeholder="jour"
                     />
                   </div>
@@ -170,7 +187,7 @@ export default function Register() {
                     <Select
                       options={mois}
                       className="form-select rounded shadow-lg border border-secondary p-2"
-                      onChange={(e) => setMois(e.target.value)}
+                      onChange={(e) => setSelectedMois(e.target.value)}
                       placeholder="mois"
                     />
                   </div>
@@ -180,7 +197,7 @@ export default function Register() {
                     <Select
                       options={annees}
                       className="form-select rounded shadow-lg border border-secondary p-2"
-                      onChange={(e) => setAnnees(e.target.value)}
+                      onChange={(e) => setSelectedAnnee(e.target.value)}
                       placeholder="annee"
                     />
                   </div>
@@ -193,7 +210,7 @@ export default function Register() {
                     <Select
                       options={genres}
                       className="form-select rounded shadow-lg border border-secondary p-2"
-                      onChange={(e) => setGenres(e.target.value)}
+                      onChange={(e) => setSelectedGenre(e.target.value)}
                       placeholder="Genre"
                     />
                   </div>
@@ -210,10 +227,10 @@ export default function Register() {
                   </span>
                   Password
                 </label>
-                <div className="input-group">
+                <div className="position-relative">
                   <Input
                     type={showPassword ? "text" : "password"}
-                    classeName="form-control rounded shadow-lg border border-secondary p-2"
+                    className="form-control rounded shadow-lg border border-secondary p-2"
                     id="password"
                     placeholder="Enter your password"
                     onChange={(e) => setPassword(e.target.value)}
@@ -240,7 +257,7 @@ export default function Register() {
                 </div>
               </div>
 
-              <div className="col mb-3" style={{ position: "relative" }}>
+              <div className="col mb-3">
                 <label
                   htmlFor="password"
                   className="form-label d-flex align-items-center "
@@ -250,13 +267,13 @@ export default function Register() {
                   </span>
                   Confirm password
                 </label>
-                <div className="input-group">
+                <div className="position-relative">
                   <Input
                     type={showPasswordConfirm ? "text" : "password"}
-                    classeName="form-control rounded shadow-lg border border-secondary p-2"
-                    id="password"
+                    className="form-control rounded shadow-lg border border-secondary p-2"
+                    id="password_confirmation"
                     placeholder="Enter your password confirmation"
-                    onChange={() => setConfirmPassword(e.target.value)}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                   />
 
                   {
