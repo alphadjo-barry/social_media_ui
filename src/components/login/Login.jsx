@@ -1,11 +1,12 @@
 import { FaUser, FaLock } from "react-icons/fa";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import Input from "../inputs/text/Input.jsx";
 import { IoEye } from "react-icons/io5";
 import { IoMdEyeOff } from "react-icons/io";
 import "./Login.css";
 import { NavLink, useNavigate } from "react-router";
 import Cookies from "js-cookie";
+import { useLoginValidation } from "../../validations/useLoginValidation.jsx";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,55 +14,68 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const [error, setError] = useState("");
+  const { loginSchema } = useLoginValidation();
+  const [errors, setErrors] = useState({});
 
-    useEffect(() => {
-
-        if(error){
-            setTimeout(() => {
-                setError("");
-            }, 15000)
-        }
-    }, [error]);
+  useEffect(() => {
+    if (error) {
+      setTimeout(() => {
+        setError("");
+      }, 15000);
+    }
+  }, [error]);
 
   const handleAuthentication = async (e) => {
-      e.preventDefault();
+    e.preventDefault();
 
-      const payload = {
-          email: email,
-          password: password,
-      };
+    const payload = {
+      email: email,
+      password: password,
+    };
 
-      try {
-          const response = await fetch("http://localhost:8080/api/v1/authenticate", {
-              method: "POST",
-              headers: {
-                  "Content-Type": "application/json",
-              },
-              body: JSON.stringify(payload),
-          });
+    try {
+      await loginSchema.validate(payload, { abortEarly: false });
+    } catch (ValidationError) {
+      const formattedErrors = {};
+      ValidationError.inner.forEach((err) => {
+        formattedErrors[err.path] = err.message;
+      });
+      setErrors(formattedErrors);
+      return;
+    }
 
-          if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(errorData.message || "Authentication failed");
-          }
+    try {
+      const response = await fetch(
+        "http://localhost:8080/api/v1/authenticate",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
-          const jwt = await response.json();
-          console.log("Serveur response : ", jwt.token);
-
-          // Sauvegarde le token dans le cookie
-          Cookies.set("token", jwt.token, {
-              path: "/",
-              expires: 1,
-              sameSite: "Strict",
-              readOnly: true,
-          });
-
-          // Redirection vers le dashboard
-          navigate("/dashboard", { replace: true });
-      } catch (err) {
-          console.log("Error from server: ", err.message);
-          setError(err.message);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Authentication failed");
       }
+
+      const jwt = await response.json();
+
+      Cookies.set("token", jwt.token, {
+        path: "/",
+        expires: 1,
+        sameSite: "Strict",
+        readOnly: true,
+      });
+
+      // Redirection vers le dashboard
+      navigate("/dashboard", { replace: true });
+    } catch (err) {
+      console.log("Error from server: ", err.message);
+      setError(err.message);
+    }
   };
 
   return (
@@ -94,7 +108,11 @@ const Login = () => {
         <div className="col-md-4 d-flex justify-content-center align-items-center border-left border-bottom">
           <div
             className="shadow-lg p-4 rounded-4"
-            style={{ width: "550px", backgroundColor: "#ffffff" }}
+            style={{
+              width: "550px",
+              backgroundColor: "#ffffff",
+              height: "480px",
+            }}
           >
             <h4 className="text-start mb-5"> connect to connectivity</h4>
             <form>
@@ -112,16 +130,24 @@ const Login = () => {
                   <Input
                     type="text"
                     value={email}
-                    className="form-control rounded shadow-lg border border-secondary p-2"
+                    className={`form-control rounded shadow-lg border border-secondary p-2 mb-2 ${
+                      errors.email ? "is-invalid" : ""
+                    }`}
                     id="username"
                     placeholder="Enter your mail address"
                     onChange={(e) => setEmail(e.target.value)}
                     autoComplete="current-email"
                   />
                 </div>
+                {errors.email && (
+                  <small className="text-danger fw-bold">
+                    {" "}
+                    {errors.email}{" "}
+                  </small>
+                )}
               </div>
 
-              <div className="mb-3">
+              <div className="mb-2">
                 <label
                   htmlFor="password"
                   className="form-label d-flex align-items-center "
@@ -135,7 +161,9 @@ const Login = () => {
                   <Input
                     type={showPassword ? "text" : "password"}
                     value={password}
-                    className="form-control rounded shadow-lg border border-secondary p-2"
+                    className={`form-control rounded shadow-lg border border-secondary p-2 ${
+                      errors.password ? "is-invalid" : ""
+                    }`}
                     id="password"
                     placeholder="Enter your password"
                     onChange={(e) => setPassword(e.target.value)}
@@ -149,7 +177,7 @@ const Login = () => {
                       cursor: "pointer",
                       position: "absolute",
                       right: 10,
-                      top: 5
+                      top: 5,
                     }}
                     onClick={() => setShowPassword(!showPassword)}
                   >
@@ -160,13 +188,18 @@ const Login = () => {
                     )}
                   </span>
                 </div>
+                {errors.password && (
+                  <small className="text-danger fw-bold">
+                    {" "}
+                    {errors.password}{" "}
+                  </small>
+                )}
               </div>
 
               <div className="d-grid mt-4">
                 <button
                   type="submit"
-                  className="btn btn-primary btn-lg "
-                  disabled={email === "" || password === ""}
+                  className="btn btn-primary btn-lg btn-sm"
                   onClick={handleAuthentication}
                 >
                   Se connecter
@@ -188,10 +221,14 @@ const Login = () => {
               </div>
             </form>
 
-              {error && (<div className="alert alert-danger p-3 d-flex align-items-center justify-content-between" style={{ height: "50px", fontSize: "14px", fontWeight: "bold"}}>
-                         <p className="error-message">{error}</p>
-                  </div>)
-              }
+            {error && (
+              <div
+                className="alert alert-danger p-3 d-flex align-items-center justify-content-between"
+                style={{ height: "50px", fontSize: "14px", fontWeight: "bold" }}
+              >
+                <p className="error-message">{error}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
