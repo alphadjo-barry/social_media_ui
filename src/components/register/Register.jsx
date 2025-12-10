@@ -12,7 +12,7 @@ import { IoMdEyeOff } from "react-icons/io";
 import {IoEye, IoMan, IoWoman} from "react-icons/io5";
 import { RiQuestionMark } from "react-icons/ri";
 import { useRegisterValidation } from "@validations/useRegisterValidation.jsx";
-import {useNavigate} from "react-router";
+import {useNavigate} from "react-router-dom";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -43,9 +43,9 @@ export default function Register() {
   useEffect(() => {
     if (selectedJour && selectedMois && selectedAnnee) {
       const newDate = new Date(
-        selectedAnnee,
-        selectedMois - 1,
-        selectedJour
+        Number(selectedAnnee),
+        Number(selectedMois) - 1,
+        Number(selectedJour)
       ).toLocaleDateString("fr-FR");
       setBirthDay(newDate);
     }
@@ -87,6 +87,7 @@ export default function Register() {
         genre: selectedGenre,
         password
     };
+
     try {
         const response = await fetch("http://localhost:8080/api/v1/utilisateurs/user", {
             method: "POST",
@@ -111,8 +112,7 @@ export default function Register() {
 
   return (
     <div
-      className="container d-flex justify-content-center align-items-center"
-      style={{ height: "100vh" }}
+      className="container d-flex justify-content-center align-items-center mt-5 text-white rounded-3 p-3"
     >
       <div className="row">
         <div className="col-md-6 d-flex justify-content-start align-items-center text-white">
@@ -127,18 +127,18 @@ export default function Register() {
           </div>
         </div>
 
-        <div className="col-md-6 d-flex justify-content-end align-items-center border-left">
+        <div className="col-md-6 d-flex justify-content-end align-items-center mt-5">
           <div
             className="shadow-lg p-3 rounded-4"
             style={{ width: "620px", backgroundColor: "#ffffff" }}
           >
-            <h4 className="text-start mb-5"> Create an connectify account</h4>
+            <h4 className="text-start mb-3 fw-bold" style={{ fontSize: "19px", color: "blue"}}> Create an connectify account</h4>
             <form>
               <div className="row">
-                <div className="col mb-3">
+                <div className="col mb-1">
                   <label
                     htmlFor="firstname"
-                    className="form-label d-flex align-items-center   "
+                    className="form-label d-flex align-items-center"
                   >
                     <span className="input-group-text bg-light border-0">
                       <FaUser />
@@ -158,14 +158,14 @@ export default function Register() {
                     />
                   </div>
                   {errors.password && (
-                    <small className="text-danger fw-bold">
+                    <small className="text-danger fw-bold"  style={{ fontSize: "12px"}}>
                       {" "}
                       {errors.firstName}{" "}
                     </small>
                   )}
                 </div>
 
-                <div className="col mb-3">
+                <div className="col mb-1">
                   <label
                     htmlFor="lastname"
                     className="form-label d-flex align-items-center   "
@@ -188,7 +188,7 @@ export default function Register() {
                     />
                   </div>
                   {errors.lastName && (
-                    <small className="text-danger fw-bold">
+                    <small className="text-danger fw-bold" style={{ fontSize: "12px"}}>
                       {" "}
                       {errors.lastName}{" "}
                     </small>
@@ -197,7 +197,7 @@ export default function Register() {
               </div>
 
               <div className="row">
-                <div className="col mb-3">
+                <div className="col mb-1">
                   <label
                     htmlFor="username"
                     className="form-label d-flex align-items-center   "
@@ -220,14 +220,14 @@ export default function Register() {
                     />
                   </div>
                   {errors.email && (
-                    <small className="text-danger fw-bold">
+                    <small className="text-danger fw-bold"  style={{ fontSize: "12px"}}>
                       {" "}
                       {errors.email}{" "}
                     </small>
                   )}
                 </div>
 
-                <div className="col mb-3">
+                <div className="col mb-1">
                   <label
                     htmlFor="phone"
                     className="form-label d-flex align-items-center   "
@@ -250,7 +250,7 @@ export default function Register() {
                     />
                   </div>
                   {errors.phone && (
-                    <small className="text-danger fw-bold">
+                    <small className="text-danger fw-bold"  style={{ fontSize: "12px"}}>
                       {" "}
                       {errors.phone}{" "}
                     </small>
@@ -268,7 +268,7 @@ export default function Register() {
                     <RiQuestionMark />
                   </span>
                 </label>
-                <div className="col mb-3">
+                <div className="col mb-1">
                   <div className="input-group">
                     <Select
                       options={jours}
@@ -280,13 +280,13 @@ export default function Register() {
                     />
                   </div>
                   {errors.selectedJour && (
-                    <small className="text-danger fw-bold">
+                    <small className="text-danger fw-bold"  style={{ fontSize: "12px"}}>
                       {" "}
                       {errors.selectedJour}{" "}
                     </small>
                   )}
                 </div>
-                <div className="col mb-3">
+                <div className="col mb-1">
                   <div className="input-group">
                     <Select
                       options={mois}
@@ -298,13 +298,13 @@ export default function Register() {
                     />
                   </div>
                   {errors.selectedMois && (
-                    <small className="text-danger fw-bold">
+                    <small className="text-danger fw-bold"  style={{ fontSize: "12px"}}>
                       {" "}
                       {errors.selectedMois}{" "}
                     </small>
                   )}
                 </div>
-                <div className="col mb-3">
+                <div className="col mb-1">
                   <div className="input-group">
                     <Select
                       options={annees}
@@ -316,7 +316,7 @@ export default function Register() {
                     />
                   </div>
                   {errors.selectedAnnee && (
-                    <small className="text-danger fw-bold">
+                    <small className="text-danger fw-bold"  style={{ fontSize: "12px"}}>
                       {" "}
                       {errors.selectedAnnee}{" "}
                     </small>
@@ -325,7 +325,7 @@ export default function Register() {
               </div>
 
               <div className="row">
-                <div className="col mb-3">
+                <div className="col mb-1">
                   <label
                     htmlFor="firstname"
                     className="form-label d-flex align-items-center   "
@@ -346,7 +346,7 @@ export default function Register() {
                     />
                   </div>
                   {errors.genre && (
-                    <small className="text-danger fw-bold">
+                    <small className="text-danger fw-bold"  style={{ fontSize: "12px"}}>
                       {" "}
                       {errors.genre}{" "}
                     </small>
@@ -354,7 +354,7 @@ export default function Register() {
                 </div>
               </div>
 
-              <div className="col mb-3">
+              <div className="col mb-1">
                 <label
                   htmlFor="password"
                   className="form-label d-flex align-items-center "
@@ -395,16 +395,17 @@ export default function Register() {
                       )}
                     </span>
                   }
+
+                    {errors.password && (
+                        <small className="text-danger fw-bold"  style={{ fontSize: "12px"}}>
+                            {" "}
+                            {errors.password}{" "}
+                        </small>
+                    )}
                 </div>
-                {errors.password && (
-                  <small className="text-danger fw-bold">
-                    {" "}
-                    {errors.password}{" "}
-                  </small>
-                )}
               </div>
 
-              <div className="col mb-3">
+              <div className="col mb-1">
                 <label
                   htmlFor="confirm_password"
                   className="form-label d-flex align-items-center "
@@ -450,7 +451,7 @@ export default function Register() {
                 </div>
 
                 {errors.confirmPassword && (
-                  <small className="text-danger fw-bold">
+                  <small className="text-danger fw-bold"  style={{ fontSize: "12px"}}>
                     {" "}
                     {errors.confirmPassword}{" "}
                   </small>
