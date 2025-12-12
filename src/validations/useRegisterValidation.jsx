@@ -1,6 +1,7 @@
 import { number, object, string, ref } from "yup";
 
 export function useRegisterValidation() {
+
   const registerSchema = object({
     lastName: string().required("Le nom de famille est obligatoire"),
     firstName: string().required("Le prénom est obligatoire"),

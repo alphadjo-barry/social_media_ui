@@ -12,7 +12,7 @@ import { IoMdEyeOff } from "react-icons/io";
 import {IoEye, IoMan, IoWoman} from "react-icons/io5";
 import { RiQuestionMark } from "react-icons/ri";
 import { useRegisterValidation } from "@validations/useRegisterValidation.jsx";
-import {useNavigate} from "react-router-dom";
+import {NavLink, useNavigate} from "react-router-dom";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -466,7 +466,21 @@ export default function Register() {
                 >
                   Enregistrer
                 </button>
+
               </div>
+            <div className="row">
+               <div className="col d-flex justify-content-center align-items-center mt-3">
+                   <p>
+                       <NavLink
+                           to="/"
+                           className="text-decoration-none text-primary"
+                           style={{fontSize: "16px"}}
+                       >
+                          Do you have an account ?
+                       </NavLink>
+                   </p>
+               </div>
+            </div>
             </form>
           </div>
         </div>

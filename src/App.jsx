@@ -12,13 +12,15 @@ import Dashboard from "@components/dashboard/Dashboard.jsx";
 import "mdb-ui-kit/css/mdb.min.css";
 import { Dropdown, Collapse, initMDB } from "mdb-ui-kit";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import Footer from "@components/footer/Footer.jsx";
+
 import "./App.css";
 import { useContext } from "react";
 
 initMDB({ Dropdown, Collapse });
 import { ThemeContext } from "@hooks/useTheme.jsx";
 import Validation from "@components/account_validation/Validation.jsx";
+import Forgot from "@components/forgot/Forgot.jsx";
+import Publication from "@components/publications/Publication.jsx";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +36,10 @@ const router = createBrowserRouter([
     element: <Validation/>
   },
   {
+    path: "forgot-password",
+    element: <Forgot/>
+  },
+  {
     element: <ProtectedRoute />,
     children: [
       {
@@ -42,7 +48,11 @@ const router = createBrowserRouter([
           {
             path: "dashboard",
             element: <Dashboard />,
-          }
+          },
+            {
+                path: "publication",
+                element: <Publication/>,
+            }
         ],
       },
     ],
@@ -66,12 +76,12 @@ function Root() {
     <>
       <Menu />
       <div className={theme}>
-        <div className="d-flex align-items-center justify-content-between app-container">
+        <div className="d-flex align-items-center justify-content-between app-container mt-5">
           <div className="main-content">
             <Outlet />
           </div>
         </div>
-        <Footer />
+
       </div>
     </>
   );

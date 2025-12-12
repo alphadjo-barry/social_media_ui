@@ -1,12 +1,12 @@
 import { FaUser, FaLock } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import Input from "../inputs/text/Input.jsx";
+import Input from "@components/inputs/text/Input.jsx";
 import { IoEye } from "react-icons/io5";
 import { IoMdEyeOff } from "react-icons/io";
 import "./Login.css";
-import { NavLink, useNavigate } from "react-router";
+import { NavLink, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { useLoginValidation } from "../../validations/useLoginValidation.jsx";
+import { useLoginValidation } from "@validations/useLoginValidation.jsx";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -63,7 +63,10 @@ const Login = () => {
 
       const jwt = await response.json();
 
-      Cookies.set("token", jwt.token, {
+        // 🔥 Supprimer l'ancien token AVANT d'ajouter le nouveau
+        Cookies.remove("token", { path: "/" });
+
+        Cookies.set("token", jwt.token, {
         path: "/",
         expires: 1,
         sameSite: "Strict",
@@ -111,12 +114,12 @@ const Login = () => {
             style={{
               width: "550px",
               backgroundColor: "#ffffff",
-              height: "480px",
+              height: "400px",
             }}
           >
-            <h4 className="text-start mb-5"> connect to connectivity</h4>
+            <h4 className="text-start mb-3 fw-bold text-primary"> connect to connectivity</h4>
             <form>
-              <div className="mb-3">
+              <div className="mb-1">
                 <label
                   htmlFor="username"
                   className="form-label d-flex align-items-center"
@@ -140,7 +143,7 @@ const Login = () => {
                   />
                 </div>
                 {errors.email && (
-                  <small className="text-danger fw-bold">
+                  <small className="text-danger fw-bold"  style={{ fontSize: "12px"}}>
                     {" "}
                     {errors.email}{" "}
                   </small>
@@ -189,7 +192,7 @@ const Login = () => {
                   </span>
                 </div>
                 {errors.password && (
-                  <small className="text-danger fw-bold">
+                  <small className="text-danger fw-bold"  style={{ fontSize: "12px"}}>
                     {" "}
                     {errors.password}{" "}
                   </small>
@@ -207,9 +210,11 @@ const Login = () => {
               </div>
 
               <div className="d-flex justify-content-between mt-3">
-                <a href="#" className="text-decoration-none text-dark">
-                  Password forgot ?
-                </a>
+                <p className="text-decoration-none text-dark">
+                <NavLink to="forgot-password" className="text-decoration-none text-dark">
+                    Forgot your password ?
+                </NavLink>
+                </p>
                 <p>
                   <NavLink
                     to="register"

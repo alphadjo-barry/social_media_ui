@@ -3,7 +3,7 @@ import { Dropdown, initMDB } from "mdb-ui-kit";
 
 import "mdb-ui-kit/css/mdb.min.css";
 import Cookies from "js-cookie";
-import {useNavigate} from "react-router-dom";
+import {NavLink, useNavigate} from "react-router-dom";
 
 export default function Menu() {
     const navigate = useNavigate();
@@ -19,7 +19,7 @@ export default function Menu() {
 
   return (
       
-      <nav className="navbar navbar-expand-lg bg-body-tertiary">
+      <nav className="navbar navbar-expand-lg bg-body-tertiary fixed-top">
           <div className="container-fluid justify-content-between">
             
               <div className="d-flex">
@@ -45,42 +45,9 @@ export default function Menu() {
                       <span className="input-group-text border-0 d-none d-lg-flex"
                       ><i className="fas fa-search"></i
                       ></span>
+
                   </form>
               </div>
-
-              <ul className="navbar-nav flex-row d-none d-md-flex">
-                  <li className="nav-item me-3 me-lg-1 active">
-                      <a className="nav-link" href="#">
-                          <span><i className="fas fa-home fa-lg"></i></span>
-                          <span className="badge rounded-pill badge-notification bg-danger">1</span>
-                      </a>
-                  </li>
-
-                  <li className="nav-item me-3 me-lg-1">
-                      <a className="nav-link" href="#">
-                          <span><i className="fas fa-flag fa-lg"></i></span>
-                      </a>
-                  </li>
-
-                  <li className="nav-item me-3 me-lg-1">
-                      <a className="nav-link" href="#">
-                          <span><i className="fas fa-video fa-lg"></i></span>
-                      </a>
-                  </li>
-
-                  <li className="nav-item me-3 me-lg-1">
-                      <a className="nav-link" href="#">
-                          <span><i className="fas fa-shopping-bag fa-lg"></i></span>
-                      </a>
-                  </li>
-
-                  <li className="nav-item me-3 me-lg-1">
-                      <a className="nav-link" href="#">
-                          <span><i className="fas fa-users fa-lg"></i></span>
-                          <span className="badge rounded-pill badge-notification bg-danger">2</span>
-                      </a>
-                  </li>
-              </ul>
 
               <ul className="navbar-nav flex-row">
                   <li className="nav-item me-3 me-lg-1">
@@ -111,7 +78,7 @@ export default function Menu() {
                       >
                           <i className="fas fa-comments fa-lg"></i>
 
-                          <span className="badge rounded-pill badge-notification bg-danger">6</span>
+                          <span className="badge rounded-pill badge-notification bg-danger">1</span>
                       </a>
                       <ul
                           className="dropdown-menu dropdown-menu-end"
