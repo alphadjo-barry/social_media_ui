@@ -12,6 +12,7 @@ function Dashboard() {
             const response = await fetch("http://localhost:8080/api/v1/publications", {
                 method: "GET",
                 headers: {
+                    "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
             });

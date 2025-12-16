@@ -1,8 +1,9 @@
-import React, { useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {IoSendSharp} from "react-icons/io5";
 import {useTimeAgo} from "@hooks/useTimeAgo.jsx";
-import {useCommentaire} from "@hooks/useCommentaire.jsx";
+
 import {FaShareFromSquare} from "react-icons/fa6";
+import Cookies from "js-cookie";
 
 function PublicationCard({ publication }) {
 
@@ -10,12 +11,65 @@ function PublicationCard({ publication }) {
     const rireRef = useRef(null);
     const [showComments, setShowComments] = useState(false);
     const [newComment, setNewComment] = useState("");
-    const { coms } = useCommentaire();
-    const [comments, setComments] = useState([...coms]);
+    const [comments, setComments] = useState([]);
 
-    const handleComment = ()=>{
-        setComments(prev => [...prev, {id: 16, auteur: "Alphadjo Barry", texte: newComment, heure: "Il y a 2 min"}]);
+    const fetchComments = async () => {
+       try {
+           const response = await fetch(`http://localhost:8080/api/v1/commentaires/publication/${publication.id}`, {
+               method: "GET",
+               headers: {
+                   "Content-Type": "application/json",
+                   Authorization: `Bearer ${Cookies.get("token")}`,
+               }
+           });
+
+           if(!response.ok){
+               const errors = response.json();
+               console.log('fetch commentaires : ',errors);
+               throw new Error('erreur form back int fetch commentaires');
+           }
+
+          const data = await response.json();
+           console.log('data : ', data)
+
+           setComments(data)
+       }
+       catch (error) {
+           console.error('fetch commentaires : ',error);
+       }
     }
+
+    const handleComment = async () => {
+        const payload = {
+            contenu: newComment,
+            publicationId: publication?.id
+        };
+
+        setShowComments(false);
+
+        console.log("Payload envoyé :", payload);
+
+        try {
+            const response = await fetch("http://localhost:8080/api/v1/commentaires", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${Cookies.get("token")}`,
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                const errors = await response.json();
+                console.log("Erreur backend :", errors);
+                return;
+            }
+
+            console.log("Commentaire ajouté avec succès");
+        } catch (err) {
+            console.error("Erreur fetch :", err);
+        }
+    };
 
     const { legende, auteur, pictures, reactions, commentaires } = publication;
 
@@ -33,6 +87,11 @@ function PublicationCard({ publication }) {
         adoreRef.current.style.display = "none";
         rireRef.current.style.display = "none";
     };
+
+    const handleShow = ()=>{
+        setShowComments(!showComments)
+        fetchComments().then(r => r);
+    }
 
     return (
         <div className="card shadow-lg mb-2">
@@ -110,14 +169,45 @@ function PublicationCard({ publication }) {
                 {showComments && (
                     <div className="mt-3 p-1">
 
-                        {/* Liste des commentaires */}
                         {comments.map((com, index) => (
-                            <div key={index} className="mb-2 d-flex flex-column shadow-lg p-2" style={{ borderRadius: "10px", height: "75px"}}>
-                                <strong style={{ fontSize: "13px"}}>{com.auteur}</strong>
-                                <span style={{ fontSize: "13px" }}>{com.texte}</span>
-                                <small style={{ fontSize: "10px"}}>{ com.heure }</small>
+                            <div
+                                key={index}
+                                className="d-flex mb-2 justify-content-start' "
+                            >
+                                <div
+                                    className="shadow-lg p-2"
+                                    style={{
+                                        borderRadius: "10px",
+                                        width: "100%",
+                                        backgroundColor: "#f1f0f0"
+                                    }}
+                                >
+                                    <div className="row">
+                                        {/* Image à gauche */}
+                                       <div className="col-1">
+                                           <img
+                                               src={com.auteur.picturePath}
+                                               alt="user"
+                                               className="rounded-circle shadow-lg"
+                                               style={{ width: 40, height: 40, objectFit: "cover" }}
+                                           />
+                                       </div>
+
+                                        {/* Contenu du commentaire à droite */}
+                                        <div className="col-9 d-flex flex-column ms-2">
+                                            <strong style={{ fontSize: "13px" }}>
+                                                {com.auteur.firstName + " " + com.auteur.lastName}
+                                            </strong>
+                                            <p style={{ fontSize: "13px", margin: "5px 0" }}>{com.contenu}</p>
+                                            <small style={{ fontSize: "10px", color: "#555", fontWeight: "bold" }}>
+                                                { useTimeAgo(com.createdAt)}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         ))}
+
 
                         <div className="mt-3 d-flex gap-2 align-items-center">
                         <textarea
@@ -163,7 +253,7 @@ function PublicationCard({ publication }) {
                     </div>
                 </div>
 
-                <div className="col" onClick={() => setShowComments(!showComments)}
+                <div className="col" onClick={ handleShow }
                      style={{ cursor: "pointer" }}>
                     {commentaires} commentaires 💬
                 </div>
