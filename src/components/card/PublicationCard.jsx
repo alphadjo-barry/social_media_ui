@@ -5,6 +5,9 @@ import {useTimeAgo} from "@hooks/useTimeAgo.jsx";
 import {FaShareFromSquare} from "react-icons/fa6";
 import Cookies from "js-cookie";
 
+import { Client } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
+
 function PublicationCard({ publication }) {
 
     const adoreRef  = useRef(null);
@@ -12,6 +15,43 @@ function PublicationCard({ publication }) {
     const [showComments, setShowComments] = useState(false);
     const [newComment, setNewComment] = useState("");
     const [comments, setComments] = useState([]);
+
+    useEffect(() => {
+        const client = new Client({
+            webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
+            reconnectDelay: 5000,
+            onConnect: () => {
+                client.subscribe(
+                    `/topic/publications/${publication.id}/commentaires`,
+                    (message) => {
+                        const commentaire = JSON.parse(message.body);
+
+                       const [partOne, partTwo] = commentaire.createdAt.split("T");
+                       console.log(partOne, partTwo);
+                       const [year, month, day] = partOne.split("-");
+                       console.log("year : "+year+" month : "+month+" day : "+day)
+                       const [hour, minute, secondNanoSeconds] = partTwo.split(":");
+                       console.log("hour : "+hour+" minute : "+minute)
+                       const [second, nanoSeconds] = secondNanoSeconds.split(".");
+                       console.log("second : "+second+" nanoSeconds : "+nanoSeconds)
+
+                        const res = [parseInt(year), parseInt(month), parseInt(day), parseInt(hour), parseInt(minute), parseInt(second), parseInt(nanoSeconds)];
+
+                        commentaire.createdAt = res;
+                        setComments(prev => [...prev, commentaire]);
+                        console.log(' commentaire added : ', commentaire.createdAt);
+                    }
+                );
+            },
+        });
+
+        client.activate();
+
+        // Cleanup pour éviter les fuites
+        return () => {
+            client.deactivate();
+        };
+    }, [publication.id]); // ajouter publication.id comme dépendance si elle peut changer
 
     const fetchComments = async () => {
        try {
@@ -25,13 +65,10 @@ function PublicationCard({ publication }) {
 
            if(!response.ok){
                const errors = response.json();
-               console.log('fetch commentaires : ',errors);
                throw new Error('erreur form back int fetch commentaires');
            }
 
           const data = await response.json();
-           console.log('data : ', data)
-
            setComments(data)
        }
        catch (error) {
@@ -44,10 +81,6 @@ function PublicationCard({ publication }) {
             contenu: newComment,
             publicationId: publication?.id
         };
-
-        setShowComments(false);
-
-        console.log("Payload envoyé :", payload);
 
         try {
             const response = await fetch("http://localhost:8080/api/v1/commentaires", {
@@ -65,7 +98,7 @@ function PublicationCard({ publication }) {
                 return;
             }
 
-            console.log("Commentaire ajouté avec succès");
+            setNewComment("");
         } catch (err) {
             console.error("Erreur fetch :", err);
         }
@@ -88,10 +121,25 @@ function PublicationCard({ publication }) {
         rireRef.current.style.display = "none";
     };
 
-    const handleShow = ()=>{
-        setShowComments(!showComments)
-        fetchComments().then(r => r);
-    }
+    const handleShow = async () => {
+        if (!showComments) {
+            await fetchComments(); // fetch UNE SEULE FOIS
+        }
+        setShowComments(prev => !prev);
+    };
+
+
+    const parseDate = (date) => {
+        if (Array.isArray(date)) {
+            const [y, m, d, h, min, s] = date;
+            return new Date(y, m - 1, d, h, min, s);
+        }
+        return new Date(date);
+    };
+
+    const sortedComments = [...comments].sort(
+        (a, b) => parseDate(a.createdAt) - parseDate(b.createdAt)
+    );
 
     return (
         <div className="card shadow-lg mb-2">
@@ -113,7 +161,7 @@ function PublicationCard({ publication }) {
                     </h6>
 
                     <small className="text-muted" style={{ fontSize: "12px" }}>
-                        {useTimeAgo(publication.createdAt)}
+                        { useTimeAgo(publication.createdAt) }
                     </small>
                 </div>
 
@@ -169,7 +217,7 @@ function PublicationCard({ publication }) {
                 {showComments && (
                     <div className="mt-3 p-1">
 
-                        {comments.map((com, index) => (
+                        {sortedComments.map((com, index) => (
                             <div
                                 key={index}
                                 className="d-flex mb-2 justify-content-start' "
@@ -200,7 +248,7 @@ function PublicationCard({ publication }) {
                                             </strong>
                                             <p style={{ fontSize: "13px", margin: "5px 0" }}>{com.contenu}</p>
                                             <small style={{ fontSize: "10px", color: "#555", fontWeight: "bold" }}>
-                                                { useTimeAgo(com.createdAt)}
+                                                { useTimeAgo(com.createdAt) }
                                             </small>
                                         </div>
                                     </div>
@@ -255,7 +303,7 @@ function PublicationCard({ publication }) {
 
                 <div className="col" onClick={ handleShow }
                      style={{ cursor: "pointer" }}>
-                    {commentaires} commentaires 💬
+                    { sortedComments.length > 0 ? sortedComments.length : commentaires } commentaires 💬
                 </div>
 
                 <div className="col d-flex justify-content-end">

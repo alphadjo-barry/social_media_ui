@@ -1,3 +1,9 @@
+
+// main.jsx (tout en haut)
+if (typeof global === 'undefined') {
+    window.global = window;
+}
+
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
