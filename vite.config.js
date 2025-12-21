@@ -10,6 +10,7 @@ export default defineConfig({
             "@hooks": path.resolve(__dirname, "src/hooks"),
             "@components": path.resolve(__dirname, "src/components"),
             "@validations": path.resolve(__dirname, "src/validations"),
+            "@providers": path.resolve(__dirname, "src/providers"),
         },
     },
     define: {

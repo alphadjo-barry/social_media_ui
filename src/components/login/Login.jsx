@@ -58,6 +58,7 @@ const Login = () => {
 
             if (!response.ok) {
                 const errorData = await response.json();
+                console.log('Backend error : ', errorData)
                 throw new Error(errorData.message || "Authentication failed");
             }
 
@@ -136,9 +137,9 @@ const Login = () => {
                                     htmlFor="username"
                                     className="form-label d-flex align-items-center"
                                 >
-                <span className="input-group-text bg-light border-0">
-                  <FaUser />
-                </span>
+                                <span className="input-group-text bg-light border-0">
+                                  <FaUser />
+                                </span>
                                     Mail address
                                 </label>
                                 <div className="input-group">

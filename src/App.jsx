@@ -21,6 +21,8 @@ import { ThemeContext } from "@hooks/useTheme.jsx";
 import Validation from "@components/account_validation/Validation.jsx";
 import Forgot from "@components/forgot/Forgot.jsx";
 import Publication from "@components/publications/Publication.jsx";
+import Profile from "@components/profiles/Profile.jsx";
+import {UserInfoProvider} from "./providers/UserInfoContexte.jsx";
 
 const router = createBrowserRouter([
   {
@@ -46,13 +48,17 @@ const router = createBrowserRouter([
         element: <Root />,
         children: [
           {
-            path: "dashboard",
-            element: <Dashboard />,
+              path: "dashboard",
+              element: <Dashboard />,
           },
-            {
-                path: "publication",
-                element: <Publication/>,
-            }
+          {
+              path: "publication",
+              element: <Publication/>,
+          },
+          {
+              path: "profile",
+              element: <Profile/>
+          }
         ],
       },
     ],
@@ -71,18 +77,20 @@ function ProtectedRoute() {
 }
 
 function Root() {
-  const { theme } = useContext(ThemeContext);
+
   return (
     <>
-      <Menu />
-      <div className={theme}>
-        <div className="d-flex align-items-center justify-content-between app-container mt-5">
-          <div className="main-content">
-            <Outlet />
+      <UserInfoProvider>
+        <Menu />
+        <div>
+          <div className="d-flex align-items-center justify-content-between app-container mt-5">
+            <div className="main-content">
+              <Outlet />
+            </div>
           </div>
-        </div>
 
-      </div>
+        </div>
+      </UserInfoProvider>
     </>
   );
 }

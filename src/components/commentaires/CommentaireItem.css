@@ -1,0 +1,9 @@
+.commentaire-Item{
+    transition: background-color 0.2s ease, transform 0.15s ease;
+
+}
+
+.commentaire-Item:hover {
+    background-color: #f8f9fa;
+    transform: rotate(1deg);
+}

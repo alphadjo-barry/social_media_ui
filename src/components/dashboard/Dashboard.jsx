@@ -1,9 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Cookies from "js-cookie";
 import PublicationCard from "@components/card/PublicationCard.jsx";
 
+import {useNavigate} from "react-router-dom";
+import {UserInfoContexte} from "@providers/UserInfoContexte.jsx";
+import {LuUserRoundSearch} from "react-icons/lu";
+import Search from "@components/searchs/Search.jsx";
+import Sidebar from "@components/sidebars/Sidebar.jsx";
+
 function Dashboard() {
     const [publications, setPublications] = useState([]);
+    const navigate = useNavigate();
+    const { user  } = useContext(UserInfoContexte)
 
     const findAllPublications = async () => {
         try {
@@ -36,14 +44,63 @@ function Dashboard() {
         findAllPublications().then(r => r);
     }, []);
 
+    const handleFocus = () => {
+        navigate("/publication", { replace: true });
+    }
+
     return (
-        <div className="container mt-4">
+        <>
+            <div className="mt-4">
+                <div className="row">
+                    <div className="col-md-2" >
 
-            {publications.map(pub => (
-                <PublicationCard key={pub.id} publication={pub} />
-            ))}
+                    </div>
+                    <div className="col-md-6 offset-md-1">
+                        <>
+                            {/* Bloc avant la publication */}
+                            <div
+                                className="card shadow-lg d-flex mt-2 mb-2 "
+                                style={{ height: "60px", backgroundColor: "#f1f0f0" }}
+                            >
+                                <div className="row mt-2 ms-2 align-items-center">
+                                    <div className="col-1">
+                                        <img
+                                            src={user.picturePath}
+                                            alt="user"
+                                            className="rounded-circle shadow-lg"
+                                            style={{ width: 40, height: 40, objectFit: "cover" }}
+                                        />
+                                    </div>
 
-        </div>
+                                    <div className="col-9">
+                                        <input
+                                            type="text"
+                                            className="form-control rounded-pill"
+                                            placeholder="Quoi de neuf ?"
+                                            onFocus={ handleFocus }
+                                            readOnly
+                                        />
+                                    </div>
+
+                                    <div className="col-3 d-flex justify-content-end">
+                                        {/* Tu peux ajouter un bouton envoyer ici si tu veux */}
+                                    </div>
+                                </div>
+                            </div>
+
+                        </>
+
+                        {publications.map(pub => (
+                            <PublicationCard key={pub.id} publication={pub} />
+                        ))}
+
+                    </div>
+                    <div className="col-md-2 offset-md-1">
+
+                    </div>
+                </div>
+            </div>
+        </>
     );
 }
 

@@ -12,6 +12,8 @@ html, body, #root {
 
 .main-content {
     flex: 1; /* prend l’espace restant, pousse le footer en bas */
+    width: 100%;
+    padding: 10px;
 }
 
 /* Thème clair */

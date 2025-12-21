@@ -29,6 +29,7 @@ export default function Register() {
   const [selectedAnnee, setSelectedAnnee] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("");
   const [birthDay, setBirthDay] = useState("");
+  const [error, setError] = useState("");
 
   const { jours } = useJourHook();
   const { mois } = useMoisHook();
@@ -106,6 +107,7 @@ export default function Register() {
         navigate("/account-validation", { replace: true });
     }
     catch (err) {
+        setError(err.message);
         console.log("erreur : ", err);
     }
   };
@@ -128,10 +130,19 @@ export default function Register() {
         </div>
 
         <div className="col-md-6 d-flex justify-content-end align-items-center mt-5">
+
           <div
             className="shadow-lg p-3 rounded-4"
             style={{ width: "620px", backgroundColor: "#ffffff" }}
           >
+            {error && (
+                <div
+                    className="alert alert-danger p-3 d-flex align-items-center"
+                    style={{ height: "40px", fontSize: "12px", fontWeight: "bold"}}
+                >
+                  <p className="error-message">{error}</p>
+                </div>
+            )}
             <h4 className="text-start mb-3 fw-bold" style={{ fontSize: "19px", color: "blue"}}> Create an connectify account</h4>
             <form>
               <div className="row">
