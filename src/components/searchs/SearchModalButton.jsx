@@ -13,7 +13,7 @@ export default function SearchModalButton({ show, setShow }) {
                         {/* Header */}
                         <div className="modal-header">
                             <h5 className="modal-title">
-                                Rechercher des amis
+                                Rechercher des amis / Demandes
                             </h5>
                             <button
                                 type="button"

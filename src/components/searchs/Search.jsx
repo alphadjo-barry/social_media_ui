@@ -3,11 +3,34 @@ import React, {useContext, useEffect, useState} from "react";
 import Cookies from "js-cookie";
 import {UserInfoContexte} from "@providers/UserInfoContexte.jsx";
 import "./Search.css"
+import {Client} from "@stomp/stompjs";
+import SockJS from "sockjs-client";
+import InputSearch from "@components/searchs/InputSearch.jsx";
 
 export default function Search() {
     const [search, setSearch] = useState("");
     const [users, setUsers] = useState([]);
     const { user } = useContext(UserInfoContexte)
+    const [requests, setRequests] = useState([]);
+
+    useEffect(() => {
+        const client = new Client({
+            webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
+            reconnectDelay: 5000,
+            onConnect: () => {
+                client.subscribe("/user/queue/receive", (message) => {
+                    const data = JSON.parse(message.body);
+                    console.log('data from : ', data);
+                    setRequests(prev => [...prev, data]);
+                });
+            },
+        });
+
+        client.activate();
+        return () => {
+            client.deactivate();
+        };
+    }, [])
 
     const findAllUsers = async () => {
 
@@ -27,12 +50,38 @@ export default function Search() {
             }
 
             const data = await response.json();
-            console.log('users : ', data)
             setUsers(data)
         } catch (error) {
             console.log(error);
         }
     }
+
+    const fetchRequests = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/v1/conversations/sent`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${Cookies.get("token")}`,
+                },
+            });
+
+            if(!response.ok){
+                const errors = await response.json();
+                console.log('Erreur from API : ', errors)
+                throw new Error("Erreur API");
+            }
+            const data = await response.json();
+            setRequests(data)
+        }
+        catch(err) {
+            console.log(err)
+        }
+    }
+
+    useEffect(() => {
+        fetchRequests().then(r => r);
+    }, [])
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -47,19 +96,38 @@ export default function Search() {
     }, [search]);
 
 
+    const handleRequest = async (id) => {
+
+        const payload = {
+            envoyeurId: user.userId,
+            recepteurId: id
+        };
+
+        try {
+            const response = await fetch("http://localhost:8080/api/v1/conversations/requests", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${Cookies.get("token")}`,
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if(!response.ok){
+                const errors = await response.json();
+                console.log('Erreur from API in request : ', errors)
+                throw new Error("Erreur API");
+            }
+        }
+        catch(err) {
+            console.log(err)
+        }
+    }
+
+
     return(
         <>
-            <div className="d-flex align-items-center position-relative">
-                <LuUserRoundSearch className="position-absolute" style={{ left: "10px"}}/>
-                <input
-                    type="text"
-                    className="form-control rounded-pill"
-                    placeholder="Rechercher..."
-                    style={{ paddingLeft: "30px" }}
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value) }
-                />
-            </div>
+            <InputSearch search={search} setSearch={setSearch} />
 
             {users
                 .filter(u => u.id !== user.userId)
@@ -81,7 +149,6 @@ export default function Search() {
                                 }}
                             />
 
-                            {/* Texte tronqué */}
                             <div className="d-flex flex-column overflow-hidden">
                                   <span className="fw-semibold text-truncate">
                                     {u.firstName} {u.lastName}
@@ -92,14 +159,16 @@ export default function Search() {
 
                         {/* Zone bouton */}
                         <div className="flex-shrink-0 ms-2" style={{ width: "110px" }}>
-                            <button
+                            { requests.find(r => r?.recepteur?.id === u.id) ? (
+                                <button className="btn btn-sm btn-outline-danger rounded-pill disabled w-100">En attente</button>
+                            ) : (<button
                                 className="btn btn-outline-primary btn-sm rounded-pill w-100"
-                            >
+                                onClick={() => handleRequest(u.id) }>
                                 Ajouter
-                            </button>
+                            </button>)}
+
                         </div>
                     </div>
                 ))}
-
         </>);
 }

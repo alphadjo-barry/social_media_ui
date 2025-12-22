@@ -35,7 +35,6 @@ function PublicationCard({ publication }) {
                        const [second, nanoSeconds] = secondNanoSeconds.split(".");
                         commentaire.createdAt = [parseInt(year), parseInt(month), parseInt(day), parseInt(hour), parseInt(minute), parseInt(second), parseInt(nanoSeconds)];
                        setComments(prev => [...prev, commentaire]);
-                       console.log(' commentaire added : ', commentaire.createdAt);
                     }
                 );
             },

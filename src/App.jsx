@@ -14,15 +14,15 @@ import { Dropdown, Collapse, initMDB } from "mdb-ui-kit";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 import "./App.css";
-import { useContext } from "react";
 
 initMDB({ Dropdown, Collapse });
-import { ThemeContext } from "@hooks/useTheme.jsx";
+
 import Validation from "@components/account_validation/Validation.jsx";
 import Forgot from "@components/forgot/Forgot.jsx";
 import Publication from "@components/publications/Publication.jsx";
 import Profile from "@components/profiles/Profile.jsx";
 import {UserInfoProvider} from "./providers/UserInfoContexte.jsx";
+import Sent from "@components/requests/Sent.jsx";
 
 const router = createBrowserRouter([
   {
@@ -58,6 +58,10 @@ const router = createBrowserRouter([
           {
               path: "profile",
               element: <Profile/>
+          },
+          {
+            path: "sent",
+            element: <Sent/>
           }
         ],
       },
