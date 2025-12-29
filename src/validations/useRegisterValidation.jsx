@@ -34,7 +34,7 @@ export function useRegisterValidation() {
       .required("Le genre est obligatoire"),
     password: string()
       .required("Le mot de passe est obligatoire")
-      .min(6, "Le mot de passe doit comporter au moins 6 caractères"),
+      .min(8, "Le mot de passe doit comporter au moins 6 caractères"),
     confirmPassword: string()
       .required("La confirmation du mot de passe est obligatoire")
       .oneOf([ref("password"), null], "Les mots de passe doivent correspondre"),

@@ -37,6 +37,10 @@ export default function Menu() {
         navigate("/sent", { replace: true });
     }
 
+    const handleReceive = () =>{
+        navigate("/receive", { replace: true });
+    }
+
     return (
         <nav className="navbar navbar-expand-lg bg-body-tertiary fixed-top shadow-sm">
             <div className="container-fluid justify-content-between">
@@ -139,17 +143,21 @@ export default function Menu() {
                             <li><hr className="dropdown-divider" /></li>
                             <li><strong className="dropdown-item-text">Demandes d'amis</strong></li>
                             <li>
-                                <span className="dropdown-item">
+                                <span className="dropdown-item" onClick={handleReceive }>
                                     Reçues <span className="badge bg-warning"></span>
                                 </span>
-
                             </li>
                             <li>
-                                <span className="dropdown-item">
-                                    Envoyées <span className="badge bg-info" onClick={ handleSent }></span>
+                                <span
+                                    className="dropdown-item d-flex justify-content-between align-items-center"
+                                    style={{ cursor: "pointer" }}
+                                    onClick={handleSent}
+                                >
+                                    Envoyées
+                                    <span className="badge bg-info">{/* éventuellement nombre d’invitations envoyées */}</span>
                                 </span>
-
                             </li>
+
                             <li>
                                 <span className="dropdown-item">
                                     Amis <span className="badge bg-success"></span>

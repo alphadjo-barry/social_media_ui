@@ -21,8 +21,9 @@ import Validation from "@components/account_validation/Validation.jsx";
 import Forgot from "@components/forgot/Forgot.jsx";
 import Publication from "@components/publications/Publication.jsx";
 import Profile from "@components/profiles/Profile.jsx";
-import {UserInfoProvider} from "./providers/UserInfoContexte.jsx";
+import { UserInfoProvider } from "./providers/UserInfoContexte.jsx";
 import Sent from "@components/requests/Sent.jsx";
+import Receive from "@components/requests/Receive.jsx";
 
 const router = createBrowserRouter([
   {
@@ -35,11 +36,11 @@ const router = createBrowserRouter([
   },
   {
     path: "account-validation",
-    element: <Validation/>
+    element: <Validation />,
   },
   {
     path: "forgot-password",
-    element: <Forgot/>
+    element: <Forgot />,
   },
   {
     element: <ProtectedRoute />,
@@ -48,21 +49,25 @@ const router = createBrowserRouter([
         element: <Root />,
         children: [
           {
-              path: "dashboard",
-              element: <Dashboard />,
+            path: "dashboard",
+            element: <Dashboard />,
           },
           {
-              path: "publication",
-              element: <Publication/>,
+            path: "publication",
+            element: <Publication />,
           },
           {
-              path: "profile",
-              element: <Profile/>
+            path: "profile",
+            element: <Profile />,
           },
           {
             path: "sent",
-            element: <Sent/>
-          }
+            element: <Sent />,
+          },
+          {
+            path: "receive",
+            element: <Receive />,
+          },
         ],
       },
     ],
@@ -81,7 +86,6 @@ function ProtectedRoute() {
 }
 
 function Root() {
-
   return (
     <>
       <UserInfoProvider>
@@ -92,7 +96,6 @@ function Root() {
               <Outlet />
             </div>
           </div>
-
         </div>
       </UserInfoProvider>
     </>

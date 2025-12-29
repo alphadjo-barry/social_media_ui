@@ -3,32 +3,31 @@ import React, {useContext, useEffect, useState} from "react";
 import Cookies from "js-cookie";
 import {UserInfoContexte} from "@providers/UserInfoContexte.jsx";
 import "./Sent.css"
-import {Client} from "@stomp/stompjs";
-import SockJS from "sockjs-client";
-import InputSearch from "@components/searchs/InputSearch.jsx";
+
+import useWebSocketService from "@components/webSocket/useWebSocketService.jsx";
 
 export default function Sent() {
     const { user } = useContext(UserInfoContexte)
     const [requests, setRequests] = useState([]);
 
+    const { requestSend }= useWebSocketService(user.userId);
+
     useEffect(() => {
-        const client = new Client({
-            webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
-            reconnectDelay: 5000,
-            onConnect: () => {
-                client.subscribe("/user/queue/receive", (message) => {
-                    const data = JSON.parse(message.body);
-                    console.log('data from : ', data);
-                    setRequests(prev => [...prev, data]);
-                });
-            },
+        if (!requestSend) return;
+
+        setRequests(prev => {
+            const index = prev.findIndex(r => r.id === requestSend.id);
+
+            if (index > -1) {
+                return prev.map(r =>
+                    r.id === requestSend.id ? requestSend : r
+                );
+            } else {
+                return [...prev, requestSend];
+            }
         });
 
-        client.activate();
-        return () => {
-            client.deactivate();
-        };
-    }, [])
+    }, [requestSend]);
 
 
     const fetchRequests = async () => {
@@ -58,70 +57,60 @@ export default function Sent() {
         fetchRequests().then(r => r);
     }, [])
 
-    return(
-        <>
-           <div className="container mt-5">
-               <div className="row">
-                   <div className="col-md-2">
+    return (
+        <div className="container my-5">
+            <div className="row justify-content-center">
+                <div className="col-lg-8">
+                    <h3 className="mb-4 text-center text-primary">Invitations envoyées</h3>
 
-                   </div>
-                   <div className="col-md-8">
-                       <h5>Invitations envoyées</h5>
-                        <div className="card shadow-lg">
+                    {requests.length > 0 ? (
+                        <div className="d-flex flex-column gap-3">
+                            {requests
+                                .map((r, index) => (
+                                <div
+                                    key={`${index}`}
+                                    className="card shadow-sm rounded-4 p-3 d-flex align-items-center flex-md-row flex-column justify-content-between"
+                                    style={{ backgroundColor: "#f9f9f9" }}
+                                >
+                                    {/* Zone utilisateur */}
+                                    <div className="d-flex align-items-center mb-3 mb-md-0 flex-grow-1">
+                                        <img
+                                            src={ r?.recepteur?.picturePath || "/imagess/default-cover.png"}
+                                            alt="user"
+                                            className="rounded-circle me-3"
+                                            style={{ width: 60, height: 60, objectFit: "cover" }}
+                                            onError={(e) => { e.target.src = "/images/default-avatar.png"; }}
+                                        />
+                                        <div className="d-flex flex-column overflow-hidden">
+                                            <span className="fw-bold text-truncate">{r?.recepteur?.firstName} {r?.recepteur?.lastName}</span>
+                                            <small className="text-muted text-truncate">{r?.recepteur?.email}</small>
+                                        </div>
+                                    </div>
 
-                            <div className="card-body">
-
-                                { requests.length !== 0 ? requests
-                                    .map(r => (
-                                        <div
-                                            key={r.id}
-                                            className="d-flex align-items-center justify-content-center p-2 mt-2 rounded-3 shadow-lg user-item"
-                                            style={{ backgroundColor: "#fff" }}
+                                    {/* Zone boutons */}
+                                    <div className="d-flex gap-2 flex-column flex-md-row mt-2 mt-md-0">
+                                        <button
+                                            className={`btn btn-sm rounded-pill shadow-sm ${
+                                                r.status === "PENDING" ? "btn btn-danger" : "btn btn-success"
+                                            }`}
+                                            disabled={ r.status === "ACCEPTED"}
+                                            style={{ width: "100px" }}
                                         >
-                                            {/* Zone gauche */}
-                                            <div className="d-flex align-items-center flex-grow-1 min-width-0">
-                                                <img
-                                                    src={r.recepteur.picturePath}
-                                                    alt="user"
-                                                    className="rounded-circle me-2 flex-shrink-0"
-                                                    style={{ width:50, height: 50, objectFit: "cover" }}
-                                                    onError={(e) => {
-                                                        e.target.src = "/images/default-avatar.png";
-                                                    }}
-                                                />
-
-                                                <div className="d-flex flex-column overflow-hidden">
-                                                      <span className="fw-semibold text-truncate">
-                                                        {r.recepteur.firstName} {r.recepteur.lastName}
-                                                      </span>
-                                                    <small className="text-muted text-truncate">{r.recepteur.email}</small>
-                                                </div>
-                                            </div>
-
-                                            {/* Zone bouton */}
-                                            <div className="d-flex ms-2 flex-row gap-2">
-                                                <button
-                                                    className="btn btn-outline-primary btn-sm rounded-pill w-100 shadow-lg">
-                                                    { r.status === "PENDING" ? "Attente" : "Accepter" }
-                                                </button>
-                                                <button
-                                                    className="btn btn-outline-danger btn-sm rounded-pill w-100 shadow-lg"
-                                                >
-                                                    Annuler
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )) : <div className="badge bg-danger">
-                                            Vous n'avez pas d'invitation en attente d'acceptation pour le moment.
-                                        </div>
-                                }
-                            </div>
+                                            {r.status === "PENDING" ? "En attente" : "Amis"}
+                                        </button>
+                                        { r.status !== "ACCEPTED" && (<button className="btn btn-sm btn btn-warning rounded-pill shadow-sm"  style={{ width: "100px" }}>Annuler</button>)}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-                   </div>
-                   <div className="Col-md-2">
+                    ) : (
+                        <div className="alert alert-warning text-center rounded-4">
+                            Vous n'avez pas d'invitations en attente d'acceptation pour le moment.
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
 
-                   </div>
-               </div>
-           </div>
-        </>);
 }

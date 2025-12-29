@@ -4,15 +4,14 @@ import PublicationCard from "@components/card/PublicationCard.jsx";
 
 import {useNavigate} from "react-router-dom";
 import {UserInfoContexte} from "@providers/UserInfoContexte.jsx";
-import {LuUserRoundSearch} from "react-icons/lu";
-import Search from "@components/searchs/Search.jsx";
-import Sidebar from "@components/sidebars/Sidebar.jsx";
+import {conversationData} from "@components/data/ConversationData.jsx";
+import ConversationList from "@components/data/ConversationList.jsx";
 
 function Dashboard() {
     const [publications, setPublications] = useState([]);
     const navigate = useNavigate();
     const { user  } = useContext(UserInfoContexte)
-
+    const { currentUser, conversations } = conversationData();
     const findAllPublications = async () => {
         try {
             const token = Cookies.get("token");
@@ -55,7 +54,7 @@ function Dashboard() {
                     <div className="col-md-2" >
 
                     </div>
-                    <div className="col-md-6 offset-md-1">
+                    <div className="col-md-6">
                         <>
                             {/* Bloc avant la publication */}
                             <div
@@ -95,8 +94,12 @@ function Dashboard() {
                         ))}
 
                     </div>
-                    <div className="col-md-2 offset-md-1">
-
+                    <div className="col-md-3 offset-md-1">
+                            <ConversationList
+                                conversations={conversations}
+                                selectedId={currentUser.id}
+                                onSelect={ ()=> { }}
+                            />
                     </div>
                 </div>
             </div>

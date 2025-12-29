@@ -29,25 +29,10 @@ export default function SearchModalButton({ show, setShow }) {
                         >
                             <Search />
                         </div>
-
-                        {/* Footer */}
-                        <div className="modal-footer">
-                            <button
-                                className="btn btn-danger btn-sm w-40"
-                                onClick={() => setShow(false)}
-                            >
-                                Fermer
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* Backdrop */}
-            <div
-                className="modal-backdrop fade show"
-                onClick={() => setShow(false)}
-            />
         </>
     );
 }
