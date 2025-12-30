@@ -51,10 +51,10 @@ function Dashboard() {
         <>
             <div className="mt-4">
                 <div className="row">
-                    <div className="col-md-2" >
+                    <div className="col-md-2">
 
                     </div>
-                    <div className="col-md-6">
+                    <div className="col-md-5 offset-md-1">
                         <>
                             {/* Bloc avant la publication */}
                             <div
@@ -94,7 +94,7 @@ function Dashboard() {
                         ))}
 
                     </div>
-                    <div className="col-md-3 offset-md-1">
+                    <div className="col-md-3 card shadow-lg">
                             <ConversationList
                                 conversations={conversations}
                                 selectedId={currentUser.id}

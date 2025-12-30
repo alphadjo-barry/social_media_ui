@@ -126,17 +126,18 @@ export default function Search() {
     <>
       <InputSearch search={search} setSearch={setSearch} />
 
-      {requests
-        .map((r) => (
+      {users
+        .filter((u) => u.id !== user.userId)
+        .map((u) => (
           <div
-            key={r.id}
+            key={u.id}
             className="d-flex align-items-center p-2 mt-2 rounded-3 shadow-sm user-item"
             style={{ backgroundColor: "#fff" }}
           >
             {/* Zone gauche */}
             <div className="d-flex align-items-center flex-grow-1 min-width-0">
               <img
-                src={r?.recepteur?.picturePath}
+                src={u.picturePath}
                 alt="user"
                 className="rounded-circle me-2 flex-shrink-0"
                 style={{ width: 42, height: 42, objectFit: "cover" }}
@@ -147,25 +148,35 @@ export default function Search() {
 
               <div className="d-flex flex-column overflow-hidden">
                 <span className="fw-semibold text-truncate">
-                  {r?.recepteur?.firstName} {r?.recepteur?.lastName}
+                  {u.firstName} {u.lastName}
                 </span>
-                <small className="text-muted text-truncate">{r?.recepteur?.email}</small>
+                <small className="text-muted text-truncate">{u.email}</small>
               </div>
             </div>
 
             {/* Zone bouton */}
             <div className="flex-shrink-0 ms-2" style={{ width: "110px" }}>
-              {r.status === "PENDING" && (
-                  <button className="btn btn-sm btn-outline-danger rounded-pill disabled w-100">
-                    En attente
-                  </button>
-              )}
-
-              {r.status === "ACCEPTED" && (
-                  <button className="btn btn-sm btn-success rounded-pill disabled w-100">
-                    Amis
-                  </button>
-              )}
+              {(() => {
+                const r = requests.find((r) => r?.recepteur?.id === u.id);
+                return r ? (
+                    r.status === "ACCEPTED" ? (
+                        <button className="btn btn-sm btn-outline-success rounded-pill disabled w-100">
+                         Amis
+                        </button>
+                    ) : (
+                        <button className="btn btn-sm btn-outline-warning rounded-pill disabled w-100">
+                         En Attente
+                        </button>
+                    )
+                ) : (
+                    <button
+                        className="btn btn-outline-primary btn-sm rounded-pill w-100"
+                        onClick={() => handleRequest(u.id)}
+                    >
+                      Ajouter
+                    </button>
+                );
+              })()}
             </div>
 
           </div>

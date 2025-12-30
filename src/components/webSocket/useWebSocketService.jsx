@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import Cookies from "js-cookie";
 
 export default function useWebSocketService(
   userId
