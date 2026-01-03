@@ -17,17 +17,17 @@ function Dashboard() {
             const token = Cookies.get("token");
 
             const response = await fetch("http://localhost:8080/api/v1/publications", {
-                method: "GET",
+                method: "GET",  
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
             });
 
-            if (!response.ok){
+            if (!response.ok) {
                 const errors = await response.json();
-                console.log('Erreur from API : ', errors)
-                throw new Error("Erreur API");
+                console.log('Erreur from API : ', errors);
+                throw new Error(errors.message || "Erreur inconnue de l'API");
             }
 
             const data = await response.json();
@@ -48,62 +48,49 @@ function Dashboard() {
     }
 
     return (
-        <>
-            <div className="mt-4">
-                <div className="row">
-                    <div className="col-md-2">
+        <div className="container-fluid mt-4">
+            <div className="row" style={{ height: '90vh' }}> {/* Optionnel: limite la hauteur du conteneur */}
 
-                    </div>
-                    <div className="col-md-5 offset-md-1">
-                        <>
-                            {/* Bloc avant la publication */}
-                            <div
-                                className="card shadow-lg d-flex mt-2 mb-2 "
-                                style={{ height: "60px", backgroundColor: "#f1f0f0" }}
-                            >
-                                <div className="row mt-2 ms-2 align-items-center">
-                                    <div className="col-1">
-                                        <img
-                                            src={user.picturePath}
-                                            alt="user"
-                                            className="rounded-circle shadow-lg"
-                                            style={{ width: 40, height: 40, objectFit: "cover" }}
-                                        />
-                                    </div>
-
-                                    <div className="col-9">
-                                        <input
-                                            type="text"
-                                            className="form-control rounded-pill"
-                                            placeholder="Quoi de neuf ?"
-                                            onFocus={ handleFocus }
-                                            readOnly
-                                        />
-                                    </div>
-
-                                    <div className="col-3 d-flex justify-content-end">
-                                        {/* Tu peux ajouter un bouton envoyer ici si tu veux */}
-                                    </div>
-                                </div>
-                            </div>
-
-                        </>
-
-                        {publications.map(pub => (
-                            <PublicationCard key={pub.id} publication={pub} />
-                        ))}
-
-                    </div>
-                    <div className="col-md-3 card shadow-lg">
-                            <ConversationList
-                                conversations={conversations}
-                                selectedId={currentUser.id}
-                                onSelect={ ()=> { }}
-                            />
+                {/* Colonne GAUCHE - Fixe */}
+                <div className="col-md-3">
+                    <div style={{ position: 'sticky', top: '20px' }}>
+                        {/* Contenu de gauche ici */}
                     </div>
                 </div>
+
+                {/* Colonne CENTRALE - Scrollable */}
+                <div className="col-md-5" style={{ overflowY: 'auto', maxHeight: '100vh', scrollbarWidth: 'none' }}>
+                    {/* Bloc avant la publication */}
+                    <div className="card shadow-lg d-flex mt-2 mb-2" style={{ height: "60px", backgroundColor: "#f1f0f0" }}>
+                        <div className="row mt-2 ms-2 align-items-center">
+                            <div className="col-1">
+                                <img src={user.picturePath} alt="user" className="rounded-circle shadow-lg" style={{ width: 40, height: 40, objectFit: "cover" }} />
+                            </div>
+                            <div className="col-9">
+                                <input type="text" className="form-control rounded-pill" placeholder="Quoi de neuf ?" onFocus={handleFocus} readOnly />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Liste des publications */}
+                    {publications.map(pub => (
+                        <PublicationCard key={pub.id} publication={pub} />
+                    ))}
+                </div>
+
+                {/* Colonne DROITE - Fixe (Messagerie) */}
+                <div className="col-md-4"> {/* Ajusté à 4 pour combler le vide (3+5+4 = 12) */}
+                    <div className="card shadow-lg" style={{ position: 'sticky', top: '20px', height: 'calc(100vh - 40px)', overflowY: 'hidden' }}>
+                        <ConversationList
+                            conversations={conversations}
+                            selectedId={currentUser.id}
+                            onSelect={() => { }}
+                        />
+                    </div>
+                </div>
+
             </div>
-        </>
+        </div>
     );
 }
 

@@ -1,0 +1,20 @@
+.btn-reaction {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0;
+  color: #495057;
+}
+
+/* Hover clean */
+.btn-reaction:hover {
+  color: #0d6efd;
+  background-color: transparent !important;
+}
+
+/* Focus (outline Bootstrap) */
+.btn-reaction:focus,
+.btn-reaction:active {
+  outline: none !important;
+  box-shadow: none !important;
+}

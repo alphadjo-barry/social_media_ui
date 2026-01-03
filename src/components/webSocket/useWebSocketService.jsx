@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import Cookies from "js-cookie";
 
 export default function useWebSocketService(
   userId
@@ -20,15 +19,11 @@ export default function useWebSocketService(
 
         client.subscribe(`/queue/receive/${userId}`, (message) => {
           const data = JSON.parse(message.body);
-          console.log('data for request receive : ', data)
-          console.log('request receive : ', data);
           setRequestReceive(data);
         });
 
         client.subscribe(`/queue/send/${userId}`, (message) => {
           const data = JSON.parse(message.body);
-          console.log('data for request send  : ', data)
-          console.log('request send : ', data);
           setRequestSend(data);
         });
       },

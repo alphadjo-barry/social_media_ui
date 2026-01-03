@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useTimeAgo} from "@hooks/useTimeAgo.jsx";
 
 import Cookies from "js-cookie";
@@ -12,8 +12,6 @@ import Reaction from "@components/reactions/Reaction.jsx";
 
 function PublicationCard({ publication }) {
 
-    const adoreRef  = useRef(null);
-    const rireRef = useRef(null);
     const [showComments, setShowComments] = useState(false);
     const [newComment, setNewComment] = useState("");
     const [comments, setComments] = useState([]);
@@ -109,15 +107,6 @@ function PublicationCard({ publication }) {
     const visiblePictures = pictures?.slice(0, maxVisible) || [];
     const hiddenPicturesCount = pictures?.length > maxVisible ? pictures.length - maxVisible : 0;
 
-    const handleMouseEnter = () => {
-        adoreRef.current.style.display = "inline";
-        rireRef.current.style.display = "inline";
-    };
-
-    const handleMouseLeave = () => {
-        adoreRef.current.style.display = "none";
-        rireRef.current.style.display = "none";
-    };
 
     const handleShow = async () => {
         if (!showComments) {
@@ -203,10 +192,6 @@ function PublicationCard({ publication }) {
                     reactions={reactions}
                     sortedComments={sortedComments}
                     commentaires={commentaires}
-                    handleMouseEnter={handleMouseEnter}
-                    handleMouseLeave={handleMouseLeave}
-                    adoreRef={adoreRef}
-                    rireRef={rireRef}
                     publicationId={publication.id}
                 />
             </div>

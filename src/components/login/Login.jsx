@@ -59,7 +59,7 @@ const Login = () => {
             if (!response.ok) {
                 const errorData = await response.json();
                 console.log('Backend error : ', errorData)
-                throw new Error(errorData.message || "Authentication failed");
+                return;
             }
 
             const jwt = await response.json();
